@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdio>
 #include <stdio.h>
+#include "Restricoes.cpp"
 
 float angulo = 0;
 
@@ -28,6 +29,12 @@ void desenhaFase(){
 		glVertex2f( 1.0f, chao);
 		glVertex2f( -1.0f, chao);
 	glEnd();
+	glBegin(GL_QUADS);
+		glVertex2f( -1.0f, -0.5f);
+		glVertex2f( 1.0f , -0.5f);
+		glVertex2f( 1.0f, -0.55);
+		glVertex2f( -1.0f, -0.55);
+	glEnd();
 }
 
 void desenho(){
@@ -50,38 +57,33 @@ void desenho(){
 	// Apresentar a cena na tela
 	glutSwapBuffers();
 }
-bool direita(float argX) {
-	if ((argX < paredeDireita - 0.05f)) {
-		return true;
+
+void timer(int t){
+	// redesenhar (chama a função de display de novo)
+	glutPostRedisplay();
+	// Agendar a próxima executação após 60 ms.
+	posY += 0.05f;
+	if(posY <= -0.75f) {
+		glutTimerFunc(60, timer, 0);
 	}
-	return false;
 }
-bool esquerda(float argX) {
-	if ((argX > paredeEsquerda)) {
-		return true;
-	}
-	return false;
-}
+
 void teclado(unsigned char tecla, int xt, int yt){
 
 	if(tecla == 'd') {
-		if(direita(posX)) {
+		if(direita(&posX, paredeDireita)) {
 			posX += 0.05f;
 		}
 		//printf("%f", posX);
 	}
 	if(tecla == 'a') {
-		if(esquerda(posX)) {
+		if(esquerda(&posX, paredeEsquerda)) {
 			posX -= 0.05f;
 		}
 	}
-}
-void timer(int t){
-	// redesenhar (chama a função de display de novo)
-	glutPostRedisplay();
-	//posX += 0.01f;
-	// Agendar a próxima executação após 60 ms.
-	glutTimerFunc(60, timer, 0);
+	if(tecla == 'v') {
+		glutTimerFunc(0, timer, 0);
+	}
 }
 
 int main(int argc, char * argv[]){
@@ -96,7 +98,6 @@ int main(int argc, char * argv[]){
 	glutDisplayFunc(desenho);
 	glutKeyboardFunc(teclado);
 	// definir a função de callback do timer
-	glutTimerFunc(0, timer, 0);
 
 	// Laço principal do OpenGL.
 	glutMainLoop();
