@@ -59,13 +59,12 @@ void desenho(){
 }
 
 void timer(int t){
-	// redesenhar (chama a função de display de novo)
-	glutPostRedisplay();
-	// Agendar a próxima executação após 60 ms.
-	posY += 0.05f;
-	if(posY <= -0.75f) {
-		glutTimerFunc(60, timer, 0);
+	posY += 0.01f;
+	if(posY <= -0.8f) {
+		glutTimerFunc(10, timer, 0);
+		glutPostRedisplay();
 	}
+	// Agendar a próxima executação após 60 ms.
 }
 
 void teclado(unsigned char tecla, int xt, int yt){
@@ -73,16 +72,19 @@ void teclado(unsigned char tecla, int xt, int yt){
 	if(tecla == 'd') {
 		if(direita(&posX, paredeDireita)) {
 			posX += 0.05f;
+			glutPostRedisplay();
 		}
 		//printf("%f", posX);
 	}
 	if(tecla == 'a') {
 		if(esquerda(&posX, paredeEsquerda)) {
 			posX -= 0.05f;
+			glutPostRedisplay();
 		}
 	}
 	if(tecla == 'v') {
 		glutTimerFunc(0, timer, 0);
+		glutPostRedisplay();
 	}
 }
 
@@ -98,7 +100,7 @@ int main(int argc, char * argv[]){
 	glutDisplayFunc(desenho);
 	glutKeyboardFunc(teclado);
 	// definir a função de callback do timer
-
+	
 	// Laço principal do OpenGL.
 	glutMainLoop();
 
