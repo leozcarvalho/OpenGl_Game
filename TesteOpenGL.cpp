@@ -30,12 +30,13 @@ void desenhaFase(){
 		glVertex2f( -1.0f, chao);
 	glEnd();
 	
-	for(int i = 0; i <= 4; i++) {
+	for(int i = -2; i <= 2; i++) {
+		float gap = -0.35f;
 		glBegin(GL_QUADS);
-			glVertex2f( -1.0f, (-0.5f)* i);
-			glVertex2f( 1.0f , (-0.5f)* i);
-			glVertex2f( 1.0f, (-0.5f * i) + 0.05);
-			glVertex2f( -1.0f, (-0.5f * i) + 0.05);
+			glVertex2f( paredeEsquerda, (gap)* i);
+			glVertex2f( paredeDireita , (gap)* i);
+			glVertex2f( paredeDireita, (gap * i) + 0.05);
+			glVertex2f( paredeEsquerda, (gap * i) + 0.05);
 		glEnd();
 	}
 }
