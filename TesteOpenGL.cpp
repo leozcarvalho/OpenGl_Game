@@ -29,12 +29,15 @@ void desenhaFase(){
 		glVertex2f( 1.0f, chao);
 		glVertex2f( -1.0f, chao);
 	glEnd();
-	glBegin(GL_QUADS);
-		glVertex2f( -1.0f, -0.5f);
-		glVertex2f( 1.0f , -0.5f);
-		glVertex2f( 1.0f, -0.55);
-		glVertex2f( -1.0f, -0.55);
-	glEnd();
+	
+	for(int i = 0; i <= 4; i++) {
+		glBegin(GL_QUADS);
+			glVertex2f( -1.0f, (-0.5f)* i);
+			glVertex2f( 1.0f , (-0.5f)* i);
+			glVertex2f( 1.0f, (-0.5f * i) + 0.05);
+			glVertex2f( -1.0f, (-0.5f * i) + 0.05);
+		glEnd();
+	}
 }
 
 void desenho(){
