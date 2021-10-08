@@ -10,11 +10,11 @@ float scale = 0.1f;
 float quantidade = 0.1f;
 float paredeDireita = 1.0f;
 float paredeEsquerda = -1.0f;
-float chao = -0.95f;
+float chao = -1.0f;
 float posX = -0.9;
-float posY = chao;
+float posY = -0.95f;
 float gap_escada = 0.02f;
-float escada = -0.93f;
+float escada = -0.95f;
 //DEBUG printf("%f", variavel);
 
 void desenhaBoneco(){
@@ -26,20 +26,13 @@ void desenhaBoneco(){
 	glEnd();
 }
 void desenhaFase(){
-	glBegin(GL_QUADS);
-		glVertex2f( -1.0f, -1.0f);
-		glVertex2f( 1.0f , -1.0f);
-		glVertex2f( 1.0f, chao);
-		glVertex2f( -1.0f, chao);
-	glEnd();
-	for(int i = -2; i <= 2; i++) {
-		float gap = -0.35f;
-		//printf("%f\n", (gap * i) + 0.05);
+	for(int i = 0; i <= 4; i++) {
+		float gap = 0.40f;
 		glBegin(GL_QUADS);
-			glVertex2f( paredeEsquerda, (gap)* i);
-			glVertex2f( paredeDireita , (gap)* i);
-			glVertex2f( paredeDireita, (gap * i) + 0.05);
-			glVertex2f( paredeEsquerda, (gap * i) + 0.05);
+			glVertex2f( paredeEsquerda, (chao + (gap * i)));
+			glVertex2f( paredeDireita , (chao + (gap * i)));
+			glVertex2f( paredeDireita, (chao + (gap * i)) + 0.05f);
+			glVertex2f( paredeEsquerda, (chao + (gap * i)) + 0.05f);
 		glEnd();
 	}
 	for(int j = -1; j <= 1; j++) {
@@ -101,7 +94,7 @@ void teclado(unsigned char tecla, int xt, int yt){
 		//printf("%f", posX);
 	}
 	if(tecla == 'a') {
-		if(esquerda(&posX, paredeEsquerda)&& podeAndar(&posY)) {
+		if(esquerda(&posX, paredeEsquerda) && podeAndar(&posY)) {
 			posX -= 0.05f;
 			glutPostRedisplay();
 		}
