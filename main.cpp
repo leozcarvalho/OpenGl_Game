@@ -32,9 +32,9 @@ void desenhaFase(){
 		glVertex2f( 1.0f, chao);
 		glVertex2f( -1.0f, chao);
 	glEnd();
-	
 	for(int i = -2; i <= 2; i++) {
 		float gap = -0.35f;
+		//printf("%f\n", (gap * i) + 0.05);
 		glBegin(GL_QUADS);
 			glVertex2f( paredeEsquerda, (gap)* i);
 			glVertex2f( paredeDireita , (gap)* i);
@@ -94,15 +94,27 @@ void timer(int t){
 void teclado(unsigned char tecla, int xt, int yt){
 
 	if(tecla == 'd') {
-		if(direita(&posX, paredeDireita)) {
+		if(direita(&posX, paredeDireita) && podeAndar(&posY)) {
 			posX += 0.05f;
 			glutPostRedisplay();
 		}
 		//printf("%f", posX);
 	}
 	if(tecla == 'a') {
-		if(esquerda(&posX, paredeEsquerda)) {
+		if(esquerda(&posX, paredeEsquerda)&& podeAndar(&posY)) {
 			posX -= 0.05f;
+			glutPostRedisplay();
+		}
+	}
+	if(tecla == 'w') {
+		if(subir(&posX, &posY)) {
+			posY += 0.05f;
+			glutPostRedisplay();
+		}
+	}
+	if(tecla == 's') {
+		if(descer(&posX, &posY)) {
+			posY -= 0.05f;
 			glutPostRedisplay();
 		}
 	}
