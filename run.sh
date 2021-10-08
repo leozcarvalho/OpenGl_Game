@@ -1,5 +1,5 @@
 #!/bin/bash
 echo "Compilado"
-gcc -o main TesteOpenGL.cpp -lglut -lGL -lGLU -lm
+gcc -o main main.cpp -lglut -lGL -lGLU -lm
 ./main
 echo "FIM"
