@@ -32,8 +32,8 @@ bool descer(float *argX, float *argY) {
 	}
 	return false;
 }
-bool podeAndar(float *argY) {
-	if((*argY == -0.95f || *argY > 0.64f) || (*argY <= -0.54f && *argY >= -0.56f) || (*argY <= -0.14f && *argY >= -0.16f) || (*argY >= 0.25f && *argY <= 0.26f)) {
+bool podeAndar(float argX, float *argY) {
+	if((*argY == -0.95f || *argY > 0.64f) || (*argY <= -0.54f && *argY >= -0.56f) || (*argY <= -0.14f && *argY >= -0.16f) || (*argY >= 0.25f && *argY <= 0.26f) || (estaNaEscada(argX))) {
 		return true;
 	}
 	return false;

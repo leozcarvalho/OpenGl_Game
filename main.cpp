@@ -100,13 +100,13 @@ void timer(int t){
 void teclado(unsigned char tecla, int xt, int yt){
 
 	if(tecla == 'd') {
-		if(direita(&posX, paredeDireita) && podeAndar(&posY)) {
+		if(direita(&posX, paredeDireita) && podeAndar(posX + 0.05f, &posY)) {
 			posX += 0.05f;
 		}
 		//printf("%f", posX);
 	}
 	if(tecla == 'a') {
-		if(esquerda(&posX, paredeEsquerda) && podeAndar(&posY)) {
+		if(esquerda(&posX, paredeEsquerda) && podeAndar(posX - 0.05f, &posY)) {
 			posX -= 0.05f;
 		}
 	}
