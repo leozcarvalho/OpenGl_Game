@@ -17,7 +17,7 @@ bool estaNaEscada(float argX) {
 	return false;
 }
 bool subir(float *argX, float *argY) {
-	if(*argY < 0.75f) {
+	if(*argY < 0.65f) {
 		if(estaNaEscada(*argX)) {
 			return true;
 		}
@@ -26,17 +26,14 @@ bool subir(float *argX, float *argY) {
 }
 bool descer(float *argX, float *argY) {
 	if(*argY > -0.95f) {
-		if(*argY >= -0.95f) {
-			if (estaNaEscada(*argX)) {
-				return true;
-			}
+		if (estaNaEscada(*argX)) {
+			return true;
 		}
 	}
 	return false;
 }
 bool podeAndar(float *argY) {
-	//printf("%f", *argY);
-	if(*argY == -0.95f || *argY == -0.65f || *argY == 0.4f) {
+	if((*argY == -0.95f || *argY > 0.64f) || (*argY <= -0.54f && *argY >= -0.56f) || (*argY <= -0.14f && *argY >= -0.16f) || (*argY >= 0.25f && *argY <= 0.26f)) {
 		return true;
 	}
 	return false;

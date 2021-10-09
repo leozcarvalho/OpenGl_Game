@@ -9,6 +9,8 @@ float angulo = 0;
 float scale = 0.1f;
 float quantidade = 0.1f;
 float paredeDireita = 1.0f;
+float obstaculo = 1.0f;
+float velocidade = -0.03f;
 float paredeEsquerda = -1.0f;
 float chao = -1.0f;
 float posX = -0.9;
@@ -25,9 +27,16 @@ void desenhaBoneco(){
 		glVertex2f( posX, posY + 0.15f);
 	glEnd();
 }
+void desenhaObstasculos()
+{	
+	glTranslatef(obstaculo,-0.50f, 0.0f);
+    glutSolidSphere(0.05f,20.0f,2.0f);
+	
+}
 void desenhaFase(){
 	for(int i = 0; i <= 4; i++) {
 		float gap = 0.40f;
+
 		glBegin(GL_QUADS);
 			glVertex2f( paredeEsquerda, (chao + (gap * i)));
 			glVertex2f( paredeDireita , (chao + (gap * i)));
@@ -55,16 +64,16 @@ void desenhaFase(){
 }
 
 void desenho(){
-	// limpar a tela, apagando os dados do FrameBuffer
+
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	// Mudar a cor do fundo
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-	// Desenhar uma primitiva
 
 	glColor3f(0.0f,0.0f,1.0f);
 	desenhaFase();
+
+	glColor3f(1.0f,1.0f,0.0f);
+	desenhaObstasculos();
 
 	glLoadIdentity();
 
@@ -76,12 +85,16 @@ void desenho(){
 }
 
 void timer(int t){
-	posY += 0.04f;
-	if(posY > -0.8f) {
-		posX = -0.9;
+	if(obstaculo <= paredeEsquerda){
+		
+		velocidade = velocidade * -1;
 	}
-	glutPostRedisplay();
-	// Agendar a próxima executação após 60 ms.
+	if(obstaculo >= paredeDireita) {
+		velocidade = -0.03f;
+	}
+	obstaculo += velocidade;
+	glutPostRedisplay();		
+	glutTimerFunc(60, timer, 0);
 }
 
 void teclado(unsigned char tecla, int xt, int yt){
@@ -89,31 +102,28 @@ void teclado(unsigned char tecla, int xt, int yt){
 	if(tecla == 'd') {
 		if(direita(&posX, paredeDireita) && podeAndar(&posY)) {
 			posX += 0.05f;
-			glutPostRedisplay();
 		}
 		//printf("%f", posX);
 	}
 	if(tecla == 'a') {
 		if(esquerda(&posX, paredeEsquerda) && podeAndar(&posY)) {
 			posX -= 0.05f;
-			glutPostRedisplay();
 		}
 	}
 	if(tecla == 'w') {
 		if(subir(&posX, &posY)) {
 			posY += 0.05f;
-			glutPostRedisplay();
 		}
 	}
 	if(tecla == 's') {
 		if(descer(&posX, &posY)) {
 			posY -= 0.05f;
-			glutPostRedisplay();
 		}
 	}
 	if(tecla == 'v') {
 		glutTimerFunc(0, timer, 0);
 	}
+	glutPostRedisplay();
 }
 
 int main(int argc, char * argv[]){
@@ -122,13 +132,13 @@ int main(int argc, char * argv[]){
 
 	// Criar uma janela
 	glutInitWindowSize(800, 600);
-	glutCreateWindow("Primeiro exemplo em OpenGL");
+	glutCreateWindow("Donkey Kong OPENGL");
 
 	// definir a função de callback de display
 	glutDisplayFunc(desenho);
 	glutKeyboardFunc(teclado);
 	// definir a função de callback do timer
-	
+	glutTimerFunc(0, timer, 0);
 	// Laço principal do OpenGL.
 	glutMainLoop();
 
