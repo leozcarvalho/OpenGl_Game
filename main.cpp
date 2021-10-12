@@ -9,29 +9,39 @@ float angulo = 0;
 float scale = 0.1f;
 float quantidade = 0.1f;
 float paredeDireita = 1.0f;
-float obstaculo = 1.0f;
+float obstaculoX = 1.0f;
+float obstaculoXD = -1.0f;
 float velocidade = -0.03f;
 float paredeEsquerda = -1.0f;
 float chao = -1.0f;
 float posX = -0.9;
+float larguraBoneco = 0.05f;
 float posY = -0.95f;
+float alturaBoneco = 0.15f;
 float gap_escada = 0.02f;
 float escada = -0.95f;
+float raio = 0.05f;
+float g = 0.09f;
+
 //DEBUG printf("%f", variavel);
 
 void desenhaBoneco(){
 	glBegin(GL_QUADS);
-		glVertex2f( posX, posY);
-		glVertex2f( posX + 0.05f, posY);
-		glVertex2f( posX + 0.05f, posY + 0.15f);
-		glVertex2f( posX, posY + 0.15f);
+		glVertex2f( posX, posY );
+		glVertex2f( posX + larguraBoneco, posY );
+		glVertex2f( posX + larguraBoneco, posY + alturaBoneco );
+		glVertex2f( posX, posY + alturaBoneco );
 	glEnd();
 }
-void desenhaObstasculos()
-{	
-	glTranslatef(obstaculo,-0.50f, 0.0f);
-    glutSolidSphere(0.05f,20.0f,2.0f);
-	
+void desenhaObstasculos() {	
+	glTranslatef(obstaculoX,-0.50f, 0.0f);
+    glutSolidSphere(raio,20.0f,2.0f);
+	glLoadIdentity();
+	glTranslatef(-obstaculoX,-0.10f, 0.0f);
+    glutSolidSphere(raio,20.0f,2.0f);
+	glLoadIdentity();
+	glTranslatef(obstaculoX,0.30f, 0.0f);
+    glutSolidSphere(raio,20.0f,2.0f);
 }
 void desenhaFase(){
 	for(int i = 0; i <= 4; i++) {
@@ -80,25 +90,35 @@ void desenho(){
 	glColor3f(1.0f,0.0f,0.0f);
 	desenhaBoneco();
 	
-	// Apresentar a cena na tela
 	glutSwapBuffers();
 }
 
 void timer(int t){
-	if(obstaculo <= paredeEsquerda){
-		
-		velocidade = velocidade * -1;
+	//printf("%f", posY);
+	//printf("%d", colidiu(posX, posY, obstaculoX, -0.50f, raio));
+	//if(!colidiu(posX, posY, obstaculoX, -0.50f, raio)) {
+		if(obstaculoX <= paredeEsquerda){
+			
+			velocidade = velocidade * -1;
+		}
+		if(obstaculoX >= paredeDireita) {
+			velocidade = -0.05f;
+		}
+		obstaculoX += velocidade;
+		glutPostRedisplay();		
+		glutTimerFunc(60, timer, 0);
+	//}
+}
+void pulo(int t){
+	if(posY < -0.80f) {
+		posY+= (0.05f * g);
+		glutPostRedisplay();
+		glutTimerFunc(10, pulo, 0);
 	}
-	if(obstaculo >= paredeDireita) {
-		velocidade = -0.03f;
-	}
-	obstaculo += velocidade;
-	glutPostRedisplay();		
-	glutTimerFunc(60, timer, 0);
+	g = g*g;
 }
 
 void teclado(unsigned char tecla, int xt, int yt){
-
 	if(tecla == 'd') {
 		if(direita(&posX, paredeDireita) && podeAndar(posX + 0.05f, &posY)) {
 			posX += 0.05f;
@@ -121,7 +141,7 @@ void teclado(unsigned char tecla, int xt, int yt){
 		}
 	}
 	if(tecla == 'v') {
-		glutTimerFunc(0, timer, 0);
+		glutTimerFunc(0, pulo, 0);
 	}
 	glutPostRedisplay();
 }
