@@ -2,7 +2,6 @@
 
 bool eIgual(float a, float b) {
 	float diff = a - b;
-	printf("%f", diff);
 	if(diff < EPSILON && -diff < EPSILON) {
 		return true;
 	}
@@ -50,7 +49,11 @@ bool podeAndar(float argX, float *argY) {
 	return false;
 }
 bool colidiu(float posX, float posY, float obsX, float obsY, float raio) {
-	if(eIgual(posX, obsX) && eIgual(posY, obsY + raio)) {
+	if((eIgual(posY + 0.15f, obsY - raio)) && obsX) {
+		return true;
+	}
+	if((eIgual(posX + raio + raio, obsX) || eIgual(posX - raio, obsX)) && eIgual(posY + raio, obsY)) {
+		printf("%f, %f", posX,obsX);
 		return true;
 	}
 	return false;
