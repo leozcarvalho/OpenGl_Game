@@ -96,7 +96,7 @@ void desenho(){
 void timer(int t){
 	//printf("%f", posY);
 	//printf("%d", colidiu(posX, posY, obstaculoX, -0.50f, raio));
-	//if(!colidiu(posX, posY, obstaculoX, -0.50f, raio)) {
+	if(!colidiu(posX, posY, obstaculoX, -0.50f, raio)) {
 		if(obstaculoX <= paredeEsquerda){
 			
 			velocidade = velocidade * -1;
@@ -107,7 +107,7 @@ void timer(int t){
 		obstaculoX += velocidade;
 		glutPostRedisplay();		
 		glutTimerFunc(60, timer, 0);
-	//}
+	}
 }
 void pulo(int t){
 	if(posY < -0.80f) {
