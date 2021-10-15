@@ -5,23 +5,23 @@
 #include "Restricoes.cpp"
 
 float angulo = 0;
-
 float scale = 0.1f;
 float quantidade = 0.1f;
 float paredeDireita = 1.0f;
-float obstaculoX = 1.0f;
+float obstaculoX = -1.0f;
 float obstaculoXD = -1.0f;
 float velocidade = -0.03f;
 float paredeEsquerda = -1.0f;
 float chao = -1.0f;
-float posX = -0.9;
+float posX = -0.95;
 float larguraBoneco = 0.05f;
+float larguraObstaculo = 0.05f;
 float posY = -0.95f;
 float alturaBoneco = 0.15f;
 float gap_escada = 0.02f;
 float escada = -0.95f;
 float raio = 0.05f;
-float g = 0.09f;
+bool estaPulando = false;
 
 //DEBUG printf("%f", variavel);
 
@@ -33,20 +33,30 @@ void desenhaBoneco(){
 		glVertex2f( posX, posY + alturaBoneco );
 	glEnd();
 }
-void desenhaObstasculos() {	
-	glTranslatef(obstaculoX,-0.50f, 0.0f);
-    glutSolidSphere(raio,20.0f,2.0f);
-	glLoadIdentity();
-	glTranslatef(-obstaculoX,-0.10f, 0.0f);
-    glutSolidSphere(raio,20.0f,2.0f);
-	glLoadIdentity();
-	glTranslatef(obstaculoX,0.30f, 0.0f);
-    glutSolidSphere(raio,20.0f,2.0f);
+void desenhaObstasculos() {
+	glBegin(GL_QUADS);
+		glVertex2f( obstaculoX, -0.50f );
+		glVertex2f( obstaculoX + larguraObstaculo, -0.50f );
+		glVertex2f( obstaculoX + larguraObstaculo, -0.55f );
+		glVertex2f( obstaculoX, -0.55f);
+	glEnd();
+	glBegin(GL_QUADS);
+		glVertex2f( -obstaculoX, -0.10f );
+		glVertex2f( -obstaculoX + larguraObstaculo, -0.10f );
+		glVertex2f( -obstaculoX + larguraObstaculo, -0.15f );
+		glVertex2f( -obstaculoX, -0.15f);
+	glEnd();
+	glBegin(GL_QUADS);
+		glVertex2f( obstaculoX, 0.25f );
+		glVertex2f( obstaculoX + larguraObstaculo, 0.25f );
+		glVertex2f( obstaculoX + larguraObstaculo, 0.30f );
+		glVertex2f( obstaculoX, 0.30f);
+	glEnd();
 }
 void desenhaFase(){
 	for(int i = 0; i <= 4; i++) {
 		float gap = 0.40f;
-
+		
 		glBegin(GL_QUADS);
 			glVertex2f( paredeEsquerda, (chao + (gap * i)));
 			glVertex2f( paredeDireita , (chao + (gap * i)));
@@ -94,14 +104,13 @@ void desenho(){
 }
 
 void timer(int t){
-	//printf("%f", posY);
-	//printf("%d", colidiu(posX, posY, obstaculoX, -0.50f, raio));
-	if(!colidiu(posX, posY, obstaculoX, -0.50f, raio)) {
-		if(obstaculoX <= paredeEsquerda){
-			
+	//printf("%f", posX - larguraBoneco);
+	//printf("%d", colidiu(posX, posY, obstaculoX, -0.05f));
+	if(!colidiu(posX, posY, obstaculoX, -0.55f, larguraBoneco, alturaBoneco)) {
+		if(eIgual(obstaculoX, paredeEsquerda)){
 			velocidade = velocidade * -1;
 		}
-		if(obstaculoX >= paredeDireita) {
+		if(eIgual(obstaculoX, paredeDireita)) {
 			velocidade = -0.05f;
 		}
 		obstaculoX += velocidade;
@@ -110,12 +119,16 @@ void timer(int t){
 	}
 }
 void pulo(int t){
-	if(posY < -0.80f) {
-		posY+= (0.05f * g);
-		glutPostRedisplay();
-		glutTimerFunc(10, pulo, 0);
+	if (estaPulando) {
+		posY-= 0.1f;
+		estaPulando = false;
 	}
-	g = g*g;
+	else {
+		posY+= 0.1f;
+		glutPostRedisplay();
+		glutTimerFunc(500, pulo, 0);
+		estaPulando = true;
+	}
 }
 
 void teclado(unsigned char tecla, int xt, int yt){
