@@ -3,6 +3,7 @@
 #include <cstdio>
 #include <stdio.h>
 #include "Restricoes.cpp"
+#include <unistd.h>
 
 float angulo = 0;
 float scale = 0.1f;
@@ -133,13 +134,13 @@ void pulo(int t){
 
 void teclado(unsigned char tecla, int xt, int yt){
 	if(tecla == 'd') {
-		if(direita(&posX, paredeDireita) && podeAndar(posX + 0.05f, &posY)) {
+		if(direita(&posX, paredeDireita) && podeAndar(posX + 0.05f, posY)) {
 			posX += 0.05f;
 		}
 		//printf("%f", posX);
 	}
 	if(tecla == 'a') {
-		if(esquerda(&posX, paredeEsquerda) && podeAndar(posX - 0.05f, &posY)) {
+		if(esquerda(&posX, paredeEsquerda) && podeAndar(posX - 0.05f, posY)) {
 			posX -= 0.05f;
 		}
 	}
@@ -154,7 +155,9 @@ void teclado(unsigned char tecla, int xt, int yt){
 		}
 	}
 	if(tecla == 'v') {
-		glutTimerFunc(0, pulo, 0);
+		if(estaNoChao(posY)) {
+			glutTimerFunc(0, pulo, 0);
+		}
 	}
 	glutPostRedisplay();
 }

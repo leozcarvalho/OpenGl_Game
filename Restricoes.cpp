@@ -42,8 +42,14 @@ bool descer(float *argX, float *argY) {
 	}
 	return false;
 }
-bool podeAndar(float argX, float *argY) {
-	if((eIgual(*argY, -0.95f) || eIgual(*argY, 0.65f)) || eIgual(*argY, -0.55f) || eIgual(*argY, -0.15f) || eIgual(*argY, 0.25f) || (estaNaEscada(argX))) {
+bool estaNoChao(float argY) {
+	if(eIgual(argY, -0.95f) || eIgual(argY, 0.65f) || eIgual(argY, -0.55f) || eIgual(argY, -0.15f) || eIgual(argY, 0.25f)) {
+		return true;
+	}
+	return false;
+}
+bool podeAndar(float argX, float argY) {
+	if(estaNoChao(argY) || (estaNaEscada(argX))) {
 		return true;
 	}
 	return false;
