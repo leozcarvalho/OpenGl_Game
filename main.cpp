@@ -153,9 +153,13 @@ void desenho(){
 		}
 	}
 	if(acabou) {
-		glTranslatef(-0.1f,0.0f,0.0f);
+		glTranslatef(-0.1f,0.2f,0.0f);
 		escreve("PARABENS");
 		glLoadIdentity();
+		glTranslatef(-0.4,-0.1f,0.0f);
+		escreve("\nPRESSIONE ( P ) PARA JOGAR NOVAMENTE");
+		glLoadIdentity();
+		resetaJogo();
 	}
 	glutSwapBuffers();
 }
@@ -237,6 +241,7 @@ void teclado(unsigned char tecla, int xt, int yt){
 	}
 	if(tecla == 'p') {
 		comecou = true;
+		acabou = false;
 	}
 	glutPostRedisplay();
 }
