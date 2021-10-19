@@ -2,7 +2,7 @@
 #include <cmath>
 #include <cstdio>
 #include <stdio.h>
-#include "Restricoes.cpp"
+#include "Condicoes.cpp"
 #include <unistd.h>
 #include <string.h>
 
@@ -11,9 +11,9 @@ float andares[] = { -1.0f, -0.60f, -0.20f, 0.20f, 0.60f };
 float alturaDosAndares = 0.05f;
 float paredeDireita = 1.0f;
 float paredeEsquerda = -1.0f;
-
+float velocidadeObstaculo = -0.05f;
+float velocidadeBoneco = 0.05f;
 float obstaculos[] = { 1.0f, -1.0f, 1.0f };
-float velocidade = -0.03f;
 float larguraBoneco = 0.05f;
 float larguraObstaculo = 0.05f;
 float alturaBoneco = 0.15f;
@@ -21,6 +21,7 @@ float gap_escada = 0.02f;
 float escada = -0.95f;
 bool estaPulando = false;
 bool bateu;
+
 // Posicao inicial do Boneco
 float posX = -0.95;
 float posY = -0.95f;
@@ -113,16 +114,16 @@ void timer(int t){
 	
 	if(!bateu) {
 		if(eIgual(obstaculos[0], paredeEsquerda)){
-			velocidade = velocidade * -1;
+			velocidadeObstaculo = velocidadeObstaculo * -1;
 		}
 		if(eIgual(obstaculos[0], paredeDireita)) {
-			velocidade = -0.05f;
+			velocidadeObstaculo = -0.05f;
 		}
-		obstaculos[0] += velocidade;
-		obstaculos[1] -= velocidade;
-		obstaculos[2] += velocidade;
+		obstaculos[0] += velocidadeObstaculo;
+		obstaculos[1] -= velocidadeObstaculo;
+		obstaculos[2] += velocidadeObstaculo;
 		glutPostRedisplay();		
-		glutTimerFunc(60, timer, 0);
+		glutTimerFunc(20, timer, 0);
 	}
 }
 void pulo(int t){
@@ -140,23 +141,23 @@ void pulo(int t){
 
 void teclado(unsigned char tecla, int xt, int yt){
 	if(tecla == 'd') {
-		if(direita(&posX, paredeDireita) && podeAndar(posX + 0.05f, posY)) {
-			posX += 0.05f;
+		if(direita(&posX, paredeDireita) && podeAndar(posX + velocidadeBoneco, posY)) {
+			posX += velocidadeBoneco;
 		}
 	}
 	if(tecla == 'a') {
-		if(esquerda(&posX, paredeEsquerda) && podeAndar(posX - 0.05f, posY)) {
-			posX -= 0.05f;
+		if(esquerda(&posX, paredeEsquerda) && podeAndar(posX - velocidadeBoneco, posY)) {
+			posX -= velocidadeBoneco;
 		}
 	}
 	if(tecla == 'w') {
 		if(subir(&posX, &posY)) {
-			posY += 0.05f;
+			posY += velocidadeBoneco;
 		}
 	}
 	if(tecla == 's') {
 		if(descer(&posX, &posY)) {
-			posY -= 0.05f;
+			posY -= velocidadeBoneco;
 		}
 	}
 	if(tecla == 'v') {
