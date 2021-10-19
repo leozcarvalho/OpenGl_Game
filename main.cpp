@@ -21,6 +21,7 @@ float gap_escada = 0.02f;
 float escada = -0.95f;
 bool estaPulando = false;
 bool bateu;
+bool objetivo = false;
 
 // Posicao inicial do Boneco
 float posX = -0.95;
@@ -43,6 +44,15 @@ void desenhaBoneco(){
 		glVertex2f( posX, posY + alturaBoneco );
 	glEnd();
 }
+void desenhaObjetivo(){
+	glBegin(GL_QUADS);
+		glVertex2f( 0.0f, 0.35f );
+		glVertex2f( 0.05f, 0.35f );
+		glVertex2f( 0.05f, 0.40f );
+		glVertex2f( 0.0f, 0.40f );
+	glEnd();
+}
+
 void desenhaObstasculos() {
 	for(int i = 0; i < 3; i++) {
 		glBegin(GL_QUADS);
@@ -99,15 +109,24 @@ void desenho(){
 	glColor3f(1.0f,0.0f,0.0f);
 	desenhaBoneco();
 	
+	if(!objetivo) {
+		glColor3f(0.0f,1.0f,0.0f);
+		desenhaObjetivo();
+	}
+	
 	glutSwapBuffers();
 }
 
 void timer(int t){
+
+	if(colidiu(posX, posY, 0.0f, 0.35f, 0.05f, alturaBoneco)) {
+		objetivo = true;
+	}
 	
 	for(int i = 1; i <= 3; i++) {
 		bateu = colidiu(posX, posY, obstaculos[i-1], andares[i] + alturaDosAndares + larguraObstaculo, larguraBoneco, alturaBoneco);
 		if(bateu) {
-			resetaJogo();
+			//resetaJogo();
 			break;
 		}
 	}
@@ -121,10 +140,10 @@ void timer(int t){
 		}
 		obstaculos[0] += velocidadeObstaculo;
 		obstaculos[1] -= velocidadeObstaculo;
-		obstaculos[2] += velocidadeObstaculo;
-		glutPostRedisplay();		
-		glutTimerFunc(20, timer, 0);
+		obstaculos[2] += velocidadeObstaculo;		
+		glutTimerFunc(35, timer, 0);
 	}
+	glutPostRedisplay();
 }
 void pulo(int t){
 	if (estaPulando) {
@@ -133,7 +152,7 @@ void pulo(int t){
 	}
 	else {
 		posY+= 0.1f;
-		glutTimerFunc(300, pulo, 0);
+		glutTimerFunc(200, pulo, 0);
 		estaPulando = true;
 	}
 	glutPostRedisplay();
