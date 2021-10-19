@@ -55,14 +55,7 @@ bool podeAndar(float argX, float argY) {
 	return false;
 }
 bool colidiu(float posX, float posY, float obsX, float obsY, float largura, float alturaBoneco) {
-	//posX < obsX + 0.075f && posX + largura > obsX && posY > obsY + 0.05f && posY + 0.15f > obsY
-	printf("------------------------------------\n");
-	printf("condicao 1 %d\n", posX < obsX + 0.075f);
-	printf("condicao 2 %d\n", posX + largura > obsX);
-	printf("condicao 3 %d\n", posY > obsY + 0.05f);
-	printf("condicao 4 %d\n", posY + 0.15f > obsY);
-	printf("------------------------------------");
-	if (posX < obsX + 0.075f && posX + largura > obsX && posY > obsY + 0.05f && posY + 0.15f > obsY) {
+	if (posX < obsX + 0.075f && posX + largura > obsX && posY < obsY + largura && posY + alturaBoneco > obsY) {
 		return true;
 	}
 	return false;

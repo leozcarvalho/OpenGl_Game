@@ -4,27 +4,35 @@
 #include <stdio.h>
 #include "Restricoes.cpp"
 #include <unistd.h>
+#include <string.h>
 
-float angulo = 0;
-float scale = 0.1f;
-float quantidade = 0.1f;
+//Fase
+float andares[] = { -1.0f, -0.60f, -0.20f, 0.20f, 0.60f };
+float alturaDosAndares = 0.05f;
 float paredeDireita = 1.0f;
-float obstaculoX = -1.0f;
-float obstaculoXD = -1.0f;
-float velocidade = -0.03f;
 float paredeEsquerda = -1.0f;
-float chao = -1.0f;
-float posX = -0.95;
+
+float obstaculos[] = { 1.0f, -1.0f, 1.0f };
+float velocidade = -0.03f;
 float larguraBoneco = 0.05f;
 float larguraObstaculo = 0.05f;
-float posY = -0.95f;
 float alturaBoneco = 0.15f;
 float gap_escada = 0.02f;
 float escada = -0.95f;
-float raio = 0.05f;
 bool estaPulando = false;
+bool bateu;
+// Posicao inicial do Boneco
+float posX = -0.95;
+float posY = -0.95f;
 
 //DEBUG printf("%f", variavel);
+
+void resetaJogo() {
+	posX = -0.95;
+	posY = -0.95f;
+	bateu = false;
+	glutPostRedisplay();
+}
 
 void desenhaBoneco(){
 	glBegin(GL_QUADS);
@@ -35,34 +43,23 @@ void desenhaBoneco(){
 	glEnd();
 }
 void desenhaObstasculos() {
-	glBegin(GL_QUADS);
-		glVertex2f( obstaculoX, -0.50f );
-		glVertex2f( obstaculoX + larguraObstaculo, -0.50f );
-		glVertex2f( obstaculoX + larguraObstaculo, -0.55f );
-		glVertex2f( obstaculoX, -0.55f);
-	glEnd();
-	glBegin(GL_QUADS);
-		glVertex2f( -obstaculoX, -0.10f );
-		glVertex2f( -obstaculoX + larguraObstaculo, -0.10f );
-		glVertex2f( -obstaculoX + larguraObstaculo, -0.15f );
-		glVertex2f( -obstaculoX, -0.15f);
-	glEnd();
-	glBegin(GL_QUADS);
-		glVertex2f( obstaculoX, 0.25f );
-		glVertex2f( obstaculoX + larguraObstaculo, 0.25f );
-		glVertex2f( obstaculoX + larguraObstaculo, 0.30f );
-		glVertex2f( obstaculoX, 0.30f);
-	glEnd();
+	for(int i = 0; i < 3; i++) {
+		glBegin(GL_QUADS);
+			glVertex2f( obstaculos[i], andares[i + 1] + alturaDosAndares );
+			glVertex2f( obstaculos[i] + larguraObstaculo, andares[i + 1] + alturaDosAndares );
+			glVertex2f( obstaculos[i] + larguraObstaculo, andares[i + 1] + alturaDosAndares + larguraObstaculo);
+			glVertex2f( obstaculos[i], andares[i + 1] + alturaDosAndares + larguraObstaculo);
+		glEnd();
+	}
 }
 void desenhaFase(){
 	for(int i = 0; i <= 4; i++) {
 		float gap = 0.40f;
-		
 		glBegin(GL_QUADS);
-			glVertex2f( paredeEsquerda, (chao + (gap * i)));
-			glVertex2f( paredeDireita , (chao + (gap * i)));
-			glVertex2f( paredeDireita, (chao + (gap * i)) + 0.05f);
-			glVertex2f( paredeEsquerda, (chao + (gap * i)) + 0.05f);
+			glVertex2f( paredeEsquerda, andares[i]);
+			glVertex2f( paredeDireita , andares[i]);
+			glVertex2f( paredeDireita, andares[i] + alturaDosAndares);
+			glVertex2f( paredeEsquerda, andares[i] + alturaDosAndares);
 		glEnd();
 	}
 	for(int j = -1; j <= 1; j++) {
@@ -105,16 +102,25 @@ void desenho(){
 }
 
 void timer(int t){
-	//printf("%f", posX - larguraBoneco);
-	//printf("%d", colidiu(posX, posY, obstaculoX, -0.05f));
-	if(!colidiu(posX, posY, obstaculoX, -0.55f, larguraBoneco, alturaBoneco)) {
-		if(eIgual(obstaculoX, paredeEsquerda)){
+	
+	for(int i = 1; i <= 3; i++) {
+		bateu = colidiu(posX, posY, obstaculos[i-1], andares[i] + alturaDosAndares + larguraObstaculo, larguraBoneco, alturaBoneco);
+		if(bateu) {
+			resetaJogo();
+			break;
+		}
+	}
+	
+	if(!bateu) {
+		if(eIgual(obstaculos[0], paredeEsquerda)){
 			velocidade = velocidade * -1;
 		}
-		if(eIgual(obstaculoX, paredeDireita)) {
+		if(eIgual(obstaculos[0], paredeDireita)) {
 			velocidade = -0.05f;
 		}
-		obstaculoX += velocidade;
+		obstaculos[0] += velocidade;
+		obstaculos[1] -= velocidade;
+		obstaculos[2] += velocidade;
 		glutPostRedisplay();		
 		glutTimerFunc(60, timer, 0);
 	}
@@ -126,10 +132,10 @@ void pulo(int t){
 	}
 	else {
 		posY+= 0.1f;
-		glutPostRedisplay();
-		glutTimerFunc(500, pulo, 0);
+		glutTimerFunc(300, pulo, 0);
 		estaPulando = true;
 	}
+	glutPostRedisplay();
 }
 
 void teclado(unsigned char tecla, int xt, int yt){
@@ -137,7 +143,6 @@ void teclado(unsigned char tecla, int xt, int yt){
 		if(direita(&posX, paredeDireita) && podeAndar(posX + 0.05f, posY)) {
 			posX += 0.05f;
 		}
-		//printf("%f", posX);
 	}
 	if(tecla == 'a') {
 		if(esquerda(&posX, paredeEsquerda) && podeAndar(posX - 0.05f, posY)) {
@@ -165,17 +170,11 @@ void teclado(unsigned char tecla, int xt, int yt){
 int main(int argc, char * argv[]){
 
 	glutInit(&argc, argv);
-
-	// Criar uma janela
 	glutInitWindowSize(800, 600);
 	glutCreateWindow("Donkey Kong OPENGL");
-
-	// definir a função de callback de display
 	glutDisplayFunc(desenho);
 	glutKeyboardFunc(teclado);
-	// definir a função de callback do timer
 	glutTimerFunc(0, timer, 0);
-	// Laço principal do OpenGL.
 	glutMainLoop();
 
 	return 0;
