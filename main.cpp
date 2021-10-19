@@ -20,10 +20,13 @@ float larguraObstaculo = 0.05f;
 float alturaBoneco = 0.15f;
 float gap_escada = 0.02f;
 float escada = -0.95f;
+
+//Variaveis Booleanas
 bool estaPulando = false;
 bool bateu;
 bool comecou = false;
 bool objetivo = false;
+bool acabou = false;
 
 // Posicao inicial do Boneco
 float posX = -0.95;
@@ -121,7 +124,7 @@ void desenho(){
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	if(!comecou) {
+	if(!comecou && !acabou) {
 		glTranslatef(-0.5f,0.5f,0.0f);
 		escreve("DONKEY KONG em OPENGL\n\nControles:\n(w) - Sobe as escadas\n(s) - Desce as escadas\
 		\n(a) - Anda para a esquerda\n(d) - Anda para a direita\n(v) - Pula\nObjetivo:\nO objetivo eh\
@@ -130,7 +133,7 @@ void desenho(){
 		glLoadIdentity();
 	}
 
-	if(comecou) {
+	if(comecou && !acabou) {
 
 		glColor3f(0.0f,0.0f,1.0f);
 		desenhaFase();
@@ -138,18 +141,21 @@ void desenho(){
 		glColor3f(1.0f,1.0f,0.0f);
 		desenhaObstasculos();
 
-		glLoadIdentity();
-
-		glColor3f(1.0f,0.0f,0.0f);
-		desenhaBoneco();
-		
 		glColor3f(1.0f,1.0f,1.0f);
 		desenhaPorta();
+		
+		glColor3f(1.0f,0.0f,0.0f);
+		desenhaBoneco();
 		
 		if(!objetivo) {
 			glColor3f(0.0f,1.0f,0.0f);
 			desenhaObjetivo();
 		}
+	}
+	if(acabou) {
+		glTranslatef(-0.1f,0.0f,0.0f);
+		escreve("PARABENS");
+		glLoadIdentity();
 	}
 	glutSwapBuffers();
 }
@@ -161,6 +167,11 @@ void timer(int t){
 		objetivo = true;
 	}
 	
+	//Verifica se o objetivo foi concluido e o boneco esta na mesma posicao da porta
+	if(colidiu(posX, posY, 0.90f, -0.80f, 0.05f, alturaBoneco) && objetivo) {
+		acabou = true;
+	}
+
 	//Verifica colisoes com os obstaculos
 	for(int i = 1; i <= 3; i++) {
 		bateu = colidiu(posX, posY, obstaculos[i-1], andares[i] + alturaDosAndares + larguraObstaculo, larguraBoneco, alturaBoneco);
