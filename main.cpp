@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cstdio>
 #include <stdio.h>
+#include <string>
 #include "Condicoes.cpp"
 #include <unistd.h>
 #include <string.h>
@@ -21,11 +22,17 @@ float gap_escada = 0.02f;
 float escada = -0.95f;
 bool estaPulando = false;
 bool bateu;
+bool comecou = false;
 bool objetivo = false;
 
 // Posicao inicial do Boneco
 float posX = -0.95;
 float posY = -0.95f;
+
+//Posicao inicial do Objetivo largura e altura sao iguais
+float posObjX = 0.0f;
+float posObjY = 0.35f;
+float larguraObj = 0.05f;
 
 //DEBUG printf("%f", variavel);
 
@@ -33,7 +40,15 @@ void resetaJogo() {
 	posX = -0.95;
 	posY = -0.95f;
 	bateu = false;
+	objetivo = false;
 	glutPostRedisplay();
+}
+
+void escreve(const char *texto){
+	glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	glRasterPos2i(0, 0);
+	const unsigned char* t = reinterpret_cast<const unsigned char *>(texto);
+	glutBitmapString(GLUT_BITMAP_HELVETICA_18,t);
 }
 
 void desenhaBoneco(){
@@ -46,10 +61,19 @@ void desenhaBoneco(){
 }
 void desenhaObjetivo(){
 	glBegin(GL_QUADS);
-		glVertex2f( 0.0f, 0.35f );
-		glVertex2f( 0.05f, 0.35f );
-		glVertex2f( 0.05f, 0.40f );
-		glVertex2f( 0.0f, 0.40f );
+		glVertex2f( posObjX, posObjY );
+		glVertex2f( larguraObj, posObjY );
+		glVertex2f( larguraObj, posObjY + larguraObj );
+		glVertex2f( posObjX, posObjY + larguraObj );
+	glEnd();
+}
+
+void desenhaPorta(){
+	glBegin(GL_QUADS);
+		glVertex2f( 0.90f, -0.80f );
+		glVertex2f( 0.95f, -0.80f );
+		glVertex2f( 0.95f, -0.95f );
+		glVertex2f( 0.90f, -0.95f );
 	glEnd();
 }
 
@@ -97,36 +121,52 @@ void desenho(){
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-	glColor3f(0.0f,0.0f,1.0f);
-	desenhaFase();
-
-	glColor3f(1.0f,1.0f,0.0f);
-	desenhaObstasculos();
-
-	glLoadIdentity();
-
-	glColor3f(1.0f,0.0f,0.0f);
-	desenhaBoneco();
-	
-	if(!objetivo) {
-		glColor3f(0.0f,1.0f,0.0f);
-		desenhaObjetivo();
+	if(!comecou) {
+		glTranslatef(-0.5f,0.5f,0.0f);
+		escreve("DONKEY KONG em OPENGL\n\nControles:\n(w) - Sobe as escadas\n(s) - Desce as escadas\
+		\n(a) - Anda para a esquerda\n(d) - Anda para a direita\n(v) - Pula\nObjetivo:\nO objetivo eh\
+		capturar o bloco verde e\nescapar pela porta branca. Qualquer colisao\ncom os obstaculos\
+		amnarelos, o jogo eh retomado do inicio.\n\nPRESSIONE ( P ) PARA INICIAR O JOGO");
+		glLoadIdentity();
 	}
-	
+
+	if(comecou) {
+
+		glColor3f(0.0f,0.0f,1.0f);
+		desenhaFase();
+
+		glColor3f(1.0f,1.0f,0.0f);
+		desenhaObstasculos();
+
+		glLoadIdentity();
+
+		glColor3f(1.0f,0.0f,0.0f);
+		desenhaBoneco();
+		
+		glColor3f(1.0f,1.0f,1.0f);
+		desenhaPorta();
+		
+		if(!objetivo) {
+			glColor3f(0.0f,1.0f,0.0f);
+			desenhaObjetivo();
+		}
+	}
 	glutSwapBuffers();
 }
 
 void timer(int t){
-
-	if(colidiu(posX, posY, 0.0f, 0.35f, 0.05f, alturaBoneco)) {
+	
+	//Verifica se o boneco pegou o objetivo
+	if(colidiu(posX, posY, posObjX, posObjY, larguraObj, alturaBoneco)) {
 		objetivo = true;
 	}
 	
+	//Verifica colisoes com os obstaculos
 	for(int i = 1; i <= 3; i++) {
 		bateu = colidiu(posX, posY, obstaculos[i-1], andares[i] + alturaDosAndares + larguraObstaculo, larguraBoneco, alturaBoneco);
 		if(bateu) {
-			//resetaJogo();
+			resetaJogo();
+			glutPostRedisplay();
 			break;
 		}
 	}
@@ -183,6 +223,9 @@ void teclado(unsigned char tecla, int xt, int yt){
 		if(estaNoChao(posY)) {
 			glutTimerFunc(0, pulo, 0);
 		}
+	}
+	if(tecla == 'p') {
+		comecou = true;
 	}
 	glutPostRedisplay();
 }
