@@ -130,9 +130,9 @@ void desenho(){
 	if(!comecou && !acabou) {
 		glTranslatef(-0.5f,0.5f,0.0f);
 		escreve("DONKEY KONG em OPENGL\n\nControles:\n(w) - Sobe as escadas\n(s) - Desce as escadas\
-		\n(a) - Anda para a esquerda\n(d) - Anda para a direita\n(v) - Pula\nObjetivo:\nO objetivo eh\
+		\n(a) - Anda para a esquerda\n(d) - Anda para a direita\n(SPACE) - Pula\nObjetivo:\nO objetivo eh\
 		capturar o bloco verde e\nescapar pela porta branca. Qualquer colisao\ncom os obstaculos\
-		amnarelos, o jogo eh retomado do inicio.\n\nPRESSIONE ( P ) PARA INICIAR O JOGO");
+		amnarelos, o jogo eh retomado do inicio.\n\nPRESSIONE ( ENTER ) PARA INICIAR O JOGO");
 		glLoadIdentity();
 	}
 
@@ -164,7 +164,7 @@ void desenho(){
 		escreve("PARABENS");
 		glLoadIdentity();
 		glTranslatef(-0.4,-0.1f,0.0f);
-		escreve("\nPRESSIONE ( P ) PARA JOGAR NOVAMENTE");
+		escreve("\nPRESSIONE ( ENTER ) PARA JOGAR NOVAMENTE");
 		glLoadIdentity();
 		resetaJogo();
 	}
@@ -247,7 +247,7 @@ void teclado(unsigned char tecla, int xt, int yt){
 			glutTimerFunc(0, pulo, 0);
 		}
 	}
-	if(tecla == 'p') {
+	if(tecla == 13) {
 		comecou = true;
 		acabou = false;
 	}
