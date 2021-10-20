@@ -215,38 +215,33 @@ void pulo(int t){
 	}
 	else {
 		posY+= 0.1f;
-		glutTimerFunc(200, pulo, 0);
+		glutTimerFunc(250, pulo, 0);
 		estaPulando = true;
 	}
 	glutPostRedisplay();
 }
 
 void teclado(unsigned char tecla, int xt, int yt){
-	if(tecla == 'd') {
-		if(direita(&posX, paredeDireita) && podeAndar(posX + velocidadeBoneco, posY)) {
+	if(tecla == 'd')
+		if(direita(&posX, paredeDireita) && podeAndar(posX + velocidadeBoneco, posY) || estaPulando)
 			posX += velocidadeBoneco;
-		}
-	}
-	if(tecla == 'a') {
-		if(esquerda(&posX, paredeEsquerda) && podeAndar(posX - velocidadeBoneco, posY)) {
+
+	if(tecla == 'a')
+		if(esquerda(&posX, paredeEsquerda) && podeAndar(posX - velocidadeBoneco, posY) || estaPulando)
 			posX -= velocidadeBoneco;
-		}
-	}
-	if(tecla == 'w') {
-		if(subir(&posX, &posY)) {
+
+	if(tecla == 'w')
+		if(subir(&posX, &posY))
 			posY += velocidadeBoneco;
-		}
-	}
-	if(tecla == 's') {
-		if(descer(&posX, &posY)) {
+
+	if(tecla == 's')
+		if(descer(&posX, &posY))
 			posY -= velocidadeBoneco;
-		}
-	}
-	if(tecla == ' ') {
-		if(estaNoChao(posY)) {
+
+	if(tecla == ' ')
+		if(estaNoChao(posY))
 			glutTimerFunc(0, pulo, 0);
-		}
-	}
+
 	if(tecla == 13) {
 		comecou = true;
 		acabou = false;
