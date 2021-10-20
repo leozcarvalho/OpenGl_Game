@@ -37,6 +37,8 @@ float posObjX = 0.0f;
 float posObjY = 0.35f;
 float larguraObj = 0.05f;
 
+const char *letreiro = "Pegue o bloco verde";
+
 //DEBUG printf("%f", variavel);
 
 void resetaJogo() {
@@ -44,6 +46,7 @@ void resetaJogo() {
 	posY = -0.95f;
 	bateu = false;
 	objetivo = false;
+	letreiro = "Pegue o bloco verde";
 	glutPostRedisplay();
 }
 
@@ -140,6 +143,10 @@ void desenho(){
 
 		glColor3f(1.0f,1.0f,0.0f);
 		desenhaObstasculos();
+		
+		glTranslatef(0.4f,0.8f,0.0f);
+		escreve(letreiro);
+		glLoadIdentity();
 
 		glColor3f(1.0f,1.0f,1.0f);
 		desenhaPorta();
@@ -169,6 +176,7 @@ void timer(int t){
 	//Verifica se o boneco pegou o objetivo
 	if(colidiu(posX, posY, posObjX, posObjY, larguraObj, alturaBoneco)) {
 		objetivo = true;
+		letreiro = "Escape pela porta branca";
 	}
 	
 	//Verifica se o objetivo foi concluido e o boneco esta na mesma posicao da porta
@@ -234,7 +242,7 @@ void teclado(unsigned char tecla, int xt, int yt){
 			posY -= velocidadeBoneco;
 		}
 	}
-	if(tecla == 'v') {
+	if(tecla == ' ') {
 		if(estaNoChao(posY)) {
 			glutTimerFunc(0, pulo, 0);
 		}
